@@ -28,15 +28,17 @@ async function test() {
   let url = "";
   let snapshot = null;
 
-  // Initialize Firebase. Comment this out to make the errors go away.
+  // Initialize Firebase. Comment this block out to make the errors go away.
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);  
   const docRef = doc(db, "cities", "SF");
   snapshot = await getDoc(docRef);
+  // End of Firebase initialization.
 
-  // Initialize LogRocket. Comment this out to make the errors go away.
+  // Initialize LogRocket. Comment this block out to make the errors go away.
   LogRocket.init('hfkxwa/vota-production');
   url = await new Promise(resolve => LogRocket.getSessionURL(resolve));
+  // End of LogRocket initialization.
 
   document.querySelector('#app').innerHTML = `
     Session URL: <a href="${url}">${url}</a>
