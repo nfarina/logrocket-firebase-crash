@@ -1,6 +1,6 @@
 import LogRocket from "logrocket";
 import {initializeApp} from "firebase/app";
-import {doc, getDoc, getFirestore} from "firebase/firestore";
+import {doc, getDoc, getFirestore, onSnapshot} from "firebase/firestore";
 
 // This is a real Firebase project that I use for testing.
 const firebaseConfig = {
@@ -32,7 +32,10 @@ async function test() {
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);  
   const docRef = doc(db, "cities", "SF");
-  snapshot = await getDoc(docRef);
+  onSnapshot(docRef, snap => {
+    snapshot = snap;
+    render();
+  })
   // End of Firebase initialization.
 
   // Initialize LogRocket. Comment this block out to make the errors go away.
@@ -40,12 +43,16 @@ async function test() {
   url = await new Promise(resolve => LogRocket.getSessionURL(resolve));
   // End of LogRocket initialization.
 
-  document.querySelector('#app').innerHTML = `
-    Session URL: <a href="${url}">${url}</a>
-    <br/>
-    Data:
-    <pre>${JSON.stringify(snapshot?.data() ?? {}, null, 2)}</pre>
-    <br/>
-    Loaded: ${new Date().toISOString()}
-  `;
+  render();
+
+  function render() {
+    document.querySelector('#app').innerHTML = `
+      Session URL: <a href="${url}">${url}</a>
+      <br/>
+      Data:
+      <pre>${JSON.stringify(snapshot?.data() ?? {}, null, 2)}</pre>
+      <br/>
+      Loaded: ${new Date().toISOString()}
+    `;
+  }
 }

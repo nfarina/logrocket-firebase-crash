@@ -32,5 +32,3 @@ The number of these messages seems to scale up with the amount of Firestore acti
 You can clone this project and run `npm run build` to get the hosted example above in the `dist` folder. Then `npm run preview` to host a server you can connect an iOS device to.
 
 If you disable either of the blocks marked out in main.js, the errors will go away. So there is some kind of interaction happening between Firebase and LogRocket.
-
-I've tried debugging this myself but both LR and Firebase code is minified so it's difficult to pin down.
