@@ -1,0 +1,21 @@
+{
+  "name": "logrocket-firebase-crash",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite --port 3010 --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^2.8.6"
+  },
+  "dependencies": {
+    "firebase": "^9.6.9",
+    "http-server": "^14.1.0",
+    "logrocket": "^2.2.1"
+  }
+}
