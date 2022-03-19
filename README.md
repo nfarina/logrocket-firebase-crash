@@ -1,6 +1,6 @@
 # LogRocket + Firebase Issues
 
-We've noticed LogRocket generating hundreds of "TypeError: Load Failed" errors in our session recordings for iOS devices.
+We've noticed LogRocket generating hundreds of "TypeError: Load Failed" errors in our session recordings for iOS devices. [Here's a link to a sample session](https://app.logrocket.com/kuto/client/s/5-4f1f473a-1624-46e9-84a7-08cd826d0188/2?fromTab=latest&t=1647666564444).
 
 This repo demonstrates the issue as minimally as possible.
 
