@@ -12,9 +12,9 @@ Grab an iOS device and visit this link in Safari:
 
   [https://nfarina.github.io/logrocket-firebase-crash/](https://nfarina.github.io/logrocket-firebase-crash/)
 
-It will establish a LogRocket session and read some data from Firestore.
+It will establish a LogRocket session and establish a long-lived connection to Firestore.
 
-Now turn off your screen, and wait a few seconds. Turn it back on. Do this one more time if needed. After at most 2 times, you'll see "Error: undefined" printed a few times on the page.
+Now turn off your screen, and wait a few seconds (This will cause Firestore's fetch request to be broken). Turn it back on. You'll see "Error: undefined" printed a few times on the page.
 
 Now visit the LogRocket session using the URL provided (I assume you have magic admin access) and you'll see a bunch of these errors:
 
@@ -26,6 +26,12 @@ Uncaught (in promise): TypeError: Load failed
 ```
 
 The number of these messages seems to scale up with the amount of Firestore activity happening. This toy project only reads a single document so it "only" generates a few errors. But our production app generates so much that it trips the "maximum errors per second" limiter in LogRocket.
+
+# Guesses
+
+If you use the Web Inspector on a desktop to connect to Safari on iOS remotely, you'll see a series of "channel" requests in the Network tab that represents Firestore's continuous connection to their servers. They time out after about a minute then reconnect immediately.
+
+What I've noticed is that LogRocket will receive a fetch "response" to a new "channel" request immediately after the connection is established, and it will call `clone().text()` right away. But that Promise doesn't resolve until the channel request terminates. If the request terminates abnormally (i.e. switching off the screen and making Safari go to sleep) then catch() is called when the device wakes up, and given a "TypeError: Load failed" which LogRocket rethrows, causing these spurious console errors. Firestore itself swallows these errors becasue it knows they aren't really fetch failures and it can reconnect immediately.
 
 # Building Locally
 
