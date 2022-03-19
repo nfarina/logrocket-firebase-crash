@@ -27,6 +27,8 @@ Uncaught (in promise): TypeError: Load failed
 
 The number of these messages seems to scale up with the amount of Firestore activity happening. This toy project only reads a single document so it "only" generates a few errors. But our production app generates so much that it trips the "maximum errors per second" limiter in LogRocket.
 
+**NOTE** These errors still occur when LogRocket is told NOT to monitor network requests by passing `{network: {isEnabled: false}}`!
+
 # Guesses
 
 If you use the Web Inspector on a desktop to connect to Safari on iOS remotely, you'll see a series of "channel" requests in the Network tab that represents Firestore's continuous connection to their servers. They time out after about a minute then reconnect immediately.
