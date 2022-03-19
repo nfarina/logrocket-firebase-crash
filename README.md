@@ -31,7 +31,7 @@ The number of these messages seems to scale up with the amount of Firestore acti
 
 If you use the Web Inspector on a desktop to connect to Safari on iOS remotely, you'll see a series of "channel" requests in the Network tab that represents Firestore's continuous connection to their servers. They time out after about a minute then reconnect immediately.
 
-What I've noticed is that LogRocket will receive a fetch "response" to a new "channel" request immediately after the connection is established, and it will call `clone().text()` right away. But that Promise doesn't resolve until the channel request terminates. If the request terminates abnormally (i.e. switching off the screen and making Safari go to sleep) then catch() is called when the device wakes up, and given a "TypeError: Load failed" which LogRocket rethrows, causing these spurious console errors. Firestore itself swallows these errors becasue it knows they aren't really fetch failures and it can reconnect immediately.
+What I've noticed is that LogRocket will receive a fetch "response" to a new "channel" request immediately after the connection is established, and it will call `clone().text()` right away. But that Promise doesn't resolve until the channel request terminates. If the request terminates abnormally (i.e. switching off the screen and making Safari go to sleep) then when the device wakes up, "TypeError: Load failed" are printed from unhandled promises…somewhere. I've noticed that simply calling `clone()` on your intercepted fetch response is enough to trigger these errors, even if the rest of the response fiddling is disabled.
 
 # Building Locally
 
