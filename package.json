@@ -8,13 +8,14 @@
   "scripts": {
     "dev": "vite --port 3010 --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview --port 3010 --host 0.0.0.0",
+    "serve": "node serve.js"
   },
   "devDependencies": {
     "vite": "^2.8.6"
   },
   "dependencies": {
-    "firebase": "^9.6.9",
+    "express": "^4.17.3",
     "logrocket": "^2.2.1"
   }
 }

@@ -1,0 +1,38 @@
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-flow: column;
+  font-family: monospace;
+}
+
+#logs {
+  height: 0;
+  flex-grow: 1;
+  overflow: auto;
+  padding: 10px;
+}
+
+#errors {
+  height: 0;
+  flex-grow: 1;
+  overflow: auto;
+  padding: 10px;
+  background: #fbbdbd;  
+}
+
+h1 {
+  font-family: monospace;
+  font-size: 15px;
+  font-weight: bold;
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+}

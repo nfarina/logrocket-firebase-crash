@@ -1,58 +1,66 @@
+// Simply calling init() is enough to enable the fetch() interception which
+// triggers the iOS webkit bug - even though network.isEnabled is false!
 import LogRocket from "logrocket";
-import {initializeApp} from "firebase/app";
-import {doc, getDoc, getFirestore, onSnapshot} from "firebase/firestore";
-
-// This is a real Firebase project that I use for testing.
-const firebaseConfig = {
-  apiKey: "AIzaSyA7hx2chhb2uRKmPO3l2nRGN6qmYYGYpK8",
-  authDomain: "farina-game.firebaseapp.com",
-  projectId: "farina-game",
-  storageBucket: "farina-game.appspot.com",
-  messagingSenderId: "552603215269",
-  appId: "1:552603215269:web:bd9c6253eb465234a3344c"
-};
-
-document.querySelector('#app').innerText = `Starting…`
+LogRocket.init("hfkxwa/vota-production", { network: { isEnabled: false } });
 
 // Render on the page the same repeated errors that we see in the LogRocket
 // sessions.
-window.addEventListener("unhandledrejection", e => {
-  document.querySelector('#errors').innerHTML += `
-    <div>Error: ${e.message}</div>
-  `;
-})
+window.addEventListener("unhandledrejection", (e) =>
+  logError("Unhandled Rejection", e.message ?? "")
+);
+
+// Run the test.
+async function test() {
+  let response, text;
+
+  // You need to run `npm run serve` first.
+  log("Begin Fetch…");
+  const request = fetch(`http://${location.hostname}:3020`);
+
+  // This should succeed immediately since the server writes the response
+  // headers plus a little bit of data before hanging forever.
+  try {
+    response = await request;
+  } catch (error) {
+    log("Error awaiting response:", error.message);
+    return;
+  }
+
+  log("Response:", response?.status || "None");
+
+  // Uncomment this block to reproduce the error without LogRocket being
+  // involved (you can comment out the two LogRocket lines above).
+  //
+  // const cloned = response.clone();
+  // log("Cloned response");
+  // try {
+  //   const text2 = await cloned.text();
+  //   log("Cloned text:", text2);
+  // } catch (error) {
+  //   log("Error awaiting cloned text:", error);
+  // }
+
+  // This will hang forever, or until you turn off the screen on your iOS
+  // device and wait a few seconds.
+  try {
+    text = await response.text();
+  } catch (error) {
+    log("Error awaiting text:", error.message);
+  }
+
+  log("Text:", text);
+}
+
+// Basic on-page logging.
+
+function logTo(sel, ...text) {
+  document.querySelector(sel).innerHTML +=
+    text.map((t) => String(t)).join(" ") + "<br/>";
+}
+
+const log = (...text) => logTo("#logs", ...text);
+const logError = (...text) => logTo("#errors", ...text);
+
+// Run the test.
 
 test();
-
-async function test() {
-  let url = "";
-  let snapshot = null;
-
-  // Initialize Firebase. Comment this block out to make the errors go away.
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);  
-  const docRef = doc(db, "cities", "SF");
-  onSnapshot(docRef, snap => {
-    snapshot = snap;
-    render();
-  })
-  // End of Firebase initialization.
-
-  // Initialize LogRocket. Comment this block out to make the errors go away.
-  LogRocket.init('hfkxwa/vota-production');
-  url = await new Promise(resolve => LogRocket.getSessionURL(resolve));
-  // End of LogRocket initialization.
-
-  render();
-
-  function render() {
-    document.querySelector('#app').innerHTML = `
-      Session URL: <a href="${url}">${url}</a>
-      <br/>
-      Data:
-      <pre>${JSON.stringify(snapshot?.data() ?? {}, null, 2)}</pre>
-      <br/>
-      Loaded: ${new Date().toISOString()}
-    `;
-  }
-}
